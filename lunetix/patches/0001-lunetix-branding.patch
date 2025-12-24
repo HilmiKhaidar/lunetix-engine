@@ -1,0 +1,26 @@
+diff --git a/chrome/app/chrome_exe.rc b/chrome/app/chrome_exe.rc
+index 1234567..abcdefg 100644
+--- a/chrome/app/chrome_exe.rc
++++ b/chrome/app/chrome_exe.rc
+@@ -10,7 +10,7 @@
+ #include "chrome/app/chrome_exe_version.rc"
+ 
+ // Icon with lowest ID value placed first to ensure application icon
+-IDR_MAINFRAME       ICON               "theme\\chromium\\win\\chromium.ico"
++IDR_MAINFRAME       ICON               "theme\\lunetix.ico"
+ 
+ /////////////////////////////////////////////////////////////////////////////
+ //
+diff --git a/chrome/browser/ui/browser_window.cc b/chrome/browser/ui/browser_window.cc
+index 1234567..abcdefg 100644
+--- a/chrome/browser/ui/browser_window.cc
++++ b/chrome/browser/ui/browser_window.cc
+@@ -15,7 +15,7 @@ std::u16string BrowserWindow::GetWindowTitle() const {
+   if (browser_->profile()->IsGuestSession()) {
+     return l10n_util::GetStringUTF16(IDS_GUEST_SESSION_TAB_TITLE);
+   }
+-  return l10n_util::GetStringUTF16(IDS_BROWSER_WINDOW_TITLE_FORMAT);
++  return u"Lunetix";
+ }
+ 
+ void BrowserWindow::UpdateTitleBar() {

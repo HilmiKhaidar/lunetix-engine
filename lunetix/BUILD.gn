@@ -1,0 +1,43 @@
+import("//build/config/chrome_build.gni")
+import("//build/config/features.gni")
+import("//chrome/common/features.gni")
+
+declare_args() {
+  lunetix_channel = ""
+  lunetix_version_major = "1"
+  lunetix_version_minor = "0"
+  lunetix_version_build = "0"
+  lunetix_version_patch = "0"
+}
+
+group("lunetix") {
+  deps = [
+    "//lunetix/app:lunetix",
+    "//lunetix/browser:browser",
+    "//lunetix/common:common",
+    "//lunetix/renderer:renderer",
+    "//lunetix/utility:utility",
+  ]
+}
+
+group("lunetix_tests") {
+  testonly = true
+  deps = [
+    "//lunetix/browser:browser_tests",
+    "//lunetix/common:common_unittests",
+  ]
+}
+
+config("lunetix_features") {
+  defines = [
+    "LUNETIX_BUILD",
+    "LUNETIX_VERSION_MAJOR=$lunetix_version_major",
+    "LUNETIX_VERSION_MINOR=$lunetix_version_minor",
+    "LUNETIX_VERSION_BUILD=$lunetix_version_build",
+    "LUNETIX_VERSION_PATCH=$lunetix_version_patch",
+  ]
+  
+  if (lunetix_channel != "") {
+    defines += [ "LUNETIX_CHANNEL=\"$lunetix_channel\"" ]
+  }
+}

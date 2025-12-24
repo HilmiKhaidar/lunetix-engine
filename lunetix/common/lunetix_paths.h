@@ -1,0 +1,30 @@
+#ifndef LUNETIX_COMMON_LUNETIX_PATHS_H_
+#define LUNETIX_COMMON_LUNETIX_PATHS_H_
+
+#include "build/build_config.h"
+
+namespace lunetix {
+
+enum {
+  PATH_START = 11000,
+  
+  DIR_USER_DATA = PATH_START,
+  DIR_CRASH_DUMPS,
+  DIR_LOGS,
+  DIR_USER_DESKTOP,
+  DIR_USER_QUICK_LAUNCH,
+  DIR_DEFAULT_DOWNLOADS,
+  DIR_DEFAULT_DOWNLOADS_SAFE,
+  
+  FILE_LUNETIX_EXE,
+  FILE_HELPER_EXE,
+  FILE_RESOURCES_PACK,
+  
+  PATH_END
+};
+
+void RegisterPathProvider();
+
+}  // namespace lunetix
+
+#endif  // LUNETIX_COMMON_LUNETIX_PATHS_H_

@@ -1,0 +1,38 @@
+import("//build/config/chrome_build.gni")
+import("//build/config/features.gni")
+import("//chrome/common/features.gni")
+
+executable("lunetix") {
+  sources = [
+    "lunetix_main.cc",
+    "lunetix_main_delegate.cc",
+    "lunetix_main_delegate.h",
+  ]
+
+  deps = [
+    "//base",
+    "//chrome/app:chrome_exe_main_win",
+    "//chrome/browser",
+    "//chrome/common",
+    "//content/public/app",
+    "//lunetix/browser",
+    "//lunetix/common",
+  ]
+
+  configs += [
+    "//lunetix:lunetix_features",
+    "//build/config:exe_and_shlib_has_unwind_tables",
+  ]
+
+  if (is_win) {
+    sources += [
+      "lunetix_exe.rc",
+      "lunetix.exe.manifest",
+    ]
+    
+    deps += [
+      "//chrome/install_static:install_static_util",
+      "//chrome/installer/util:with_no_strings",
+    ]
+  }
+}

@@ -1,0 +1,109 @@
+diff --git a/chrome/browser/chrome_browser_main_parts.cc b/chrome/browser/chrome_browser_main_parts.cc
+index 1234567..abcdefg 100644
+--- a/chrome/browser/chrome_browser_main_parts.cc
++++ b/chrome/browser/chrome_browser_main_parts.cc
+@@ -45,6 +45,11 @@
+ #include "chrome/browser/resource_coordinator/tab_manager.h"
+ #include "chrome/browser/ui/browser_list.h"
+ 
++#ifdef LUNETIX_BUILD
++#include "lunetix/browser/memory/lunetix_memory_optimizer.h"
++#include "lunetix/browser/memory/lunetix_memory_settings.h"
++#endif
++
+ namespace {
+ 
+ void InitializeResourceCoordinator() {
+@@ -85,6 +90,13 @@ int ChromeBrowserMainParts::PreCreateThreads() {
+   
+   InitializeResourceCoordinator();
+   
++#ifdef LUNETIX_BUILD
++  // Initialize Lunetix Memory Optimizer
++  lunetix_memory_optimizer_ = std::make_unique<lunetix::LunetixMemoryOptimizer>();
++  if (lunetix::LunetixMemorySettings::GetOptimizationLevel() != 
++      lunetix::LunetixMemorySettings::OptimizationLevel::DISABLED) {
++    lunetix_memory_optimizer_->Start();
++  }
++#endif
++  
+   return content::RESULT_CODE_NORMAL_EXIT;
+ }
+ 
+@@ -95,6 +107,12 @@ void ChromeBrowserMainParts::PostMainMessageLoopRun() {
+   
+   BrowserList::SetLastActive(nullptr);
+   
++#ifdef LUNETIX_BUILD
++  // Shutdown Lunetix Memory Optimizer
++  if (lunetix_memory_optimizer_) {
++    lunetix_memory_optimizer_->Stop();
++    lunetix_memory_optimizer_.reset();
++  }
++#endif
++  
+   ChromeBrowserMainExtraPartsManager::GetInstance()->PostMainMessageLoopRun();
+ }
+ 
+diff --git a/chrome/browser/chrome_browser_main_parts.h b/chrome/browser/chrome_browser_main_parts.h
+index 1234567..abcdefg 100644
+--- a/chrome/browser/chrome_browser_main_parts.h
++++ b/chrome/browser/chrome_browser_main_parts.h
+@@ -15,6 +15,10 @@
+ class PrefService;
+ class Profile;
+ 
++#ifdef LUNETIX_BUILD
++namespace lunetix { class LunetixMemoryOptimizer; }
++#endif
++
+ class ChromeBrowserMainParts : public content::BrowserMainParts {
+  public:
+   explicit ChromeBrowserMainParts(bool is_integration_test);
+@@ -45,6 +49,10 @@ class ChromeBrowserMainParts : public content::BrowserMainParts {
+   
+   std::unique_ptr<ChromeBrowserMainExtraPartsManager> extra_parts_manager_;
+   
++#ifdef LUNETIX_BUILD
++  std::unique_ptr<lunetix::LunetixMemoryOptimizer> lunetix_memory_optimizer_;
++#endif
++  
+   DISALLOW_COPY_AND_ASSIGN(ChromeBrowserMainParts);
+ };
+ 
+diff --git a/chrome/browser/prefs/browser_prefs.cc b/chrome/browser/prefs/browser_prefs.cc
+index 1234567..abcdefg 100644
+--- a/chrome/browser/prefs/browser_prefs.cc
++++ b/chrome/browser/prefs/browser_prefs.cc
+@@ -25,6 +25,10 @@
+ #include "components/prefs/pref_registry_simple.h"
+ #include "components/prefs/pref_service.h"
+ 
++#ifdef LUNETIX_BUILD
++#include "lunetix/browser/memory/lunetix_memory_settings.h"
++#endif
++
+ namespace {
+ 
+ void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
+@@ -85,6 +89,18 @@ void RegisterProfilePrefs(PrefRegistrySimple* registry) {
+   registry->RegisterBooleanPref(prefs::kSafeBrowsingEnabled, true);
+   registry->RegisterBooleanPref(prefs::kSafeBrowsingExtendedReportingEnabled, false);
+   
++#ifdef LUNETIX_BUILD
++  // Register Lunetix Memory Optimizer preferences
++  registry->RegisterBooleanPref(lunetix::LunetixMemorySettings::kMemoryOptimizerEnabled,
++                               lunetix::LunetixMemorySettings::kDefaultMemoryOptimizerEnabled);
++  registry->RegisterBooleanPref(lunetix::LunetixMemorySettings::kTabSuspensionEnabled,
++                               lunetix::LunetixMemorySettings::kDefaultTabSuspensionEnabled);
++  registry->RegisterIntegerPref(lunetix::LunetixMemorySettings::kInactivityThresholdMinutes,
++                               lunetix::LunetixMemorySettings::kDefaultInactivityThresholdMinutes);
++  registry->RegisterIntegerPref(lunetix::LunetixMemorySettings::kMemoryThresholdMB,
++                               lunetix::LunetixMemorySettings::kDefaultMemoryThresholdMB);
++  registry->RegisterBooleanPref(lunetix::LunetixMemorySettings::kAggressiveMemoryMode,
++                               lunetix::LunetixMemorySettings::kDefaultAggressiveMemoryMode);
++#endif
++  
+   // Additional profile preferences
+   registry->RegisterStringPref(prefs::kDefaultSearchProviderName, "");
+   registry->RegisterStringPref(prefs::kDefaultSearchProviderKeyword, "");

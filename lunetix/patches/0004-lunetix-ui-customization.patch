@@ -1,0 +1,54 @@
+diff --git a/chrome/browser/ui/views/frame/browser_view.cc b/chrome/browser/ui/views/frame/browser_view.cc
+index 1234567..abcdefg 100644
+--- a/chrome/browser/ui/views/frame/browser_view.cc
++++ b/chrome/browser/ui/views/frame/browser_view.cc
+@@ -45,6 +45,10 @@
+ #include "ui/views/widget/widget.h"
+ #include "ui/views/window/dialog_delegate.h"
+ 
++#ifdef LUNETIX_BUILD
++#include "lunetix/browser/ui/views/lunetix_browser_view.h"
++#endif
++
+ using base::UserMetricsAction;
+ using content::NativeWebKeyboardEvent;
+ using content::WebContents;
+@@ -150,6 +154,11 @@ BrowserView* BrowserView::Create(std::unique_ptr<Browser> browser) {
+   BrowserView* view = new BrowserView(std::move(browser));
+   view->InitViews();
+   return view;
++#ifdef LUNETIX_BUILD
++  lunetix::LunetixBrowserView* view = 
++      new lunetix::LunetixBrowserView(std::move(browser));
++  view->InitViews();
++  return view;
++#endif
+ }
+ 
+diff --git a/chrome/browser/ui/browser_window.cc b/chrome/browser/ui/browser_window.cc
+index 1234567..abcdefg 100644
+--- a/chrome/browser/ui/browser_window.cc
++++ b/chrome/browser/ui/browser_window.cc
+@@ -8,6 +8,10 @@
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/grit/generated_resources.h"
+ 
++#ifdef LUNETIX_BUILD
++#include "lunetix/common/lunetix_constants.h"
++#endif
++
+ std::u16string BrowserWindow::GetWindowTitle() const {
+   content::WebContents* contents = browser_->tab_strip_model()->GetActiveWebContents();
+   std::u16string title;
+@@ -15,7 +19,11 @@ std::u16string BrowserWindow::GetWindowTitle() const {
+   if (contents) {
+     title = contents->GetTitle();
+     FormatTitleForDisplay(&title);
++#ifdef LUNETIX_BUILD
++    return base::ASCIIToUTF16(lunetix::kLunetixApplicationName) + u" - " + title;
++#else
+     return l10n_util::GetStringFUTF16(IDS_BROWSER_WINDOW_TITLE_FORMAT, title);
++#endif
+   }
+   
+   return l10n_util::GetStringUTF16(IDS_BROWSER_WINDOW_TITLE_FORMAT);

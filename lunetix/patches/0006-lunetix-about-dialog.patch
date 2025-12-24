@@ -1,0 +1,49 @@
+diff --git a/chrome/browser/ui/views/about_chrome_view.cc b/chrome/browser/ui/views/about_chrome_view.cc
+index 1234567..abcdefg 100644
+--- a/chrome/browser/ui/views/about_chrome_view.cc
++++ b/chrome/browser/ui/views/about_chrome_view.cc
+@@ -25,6 +25,11 @@
+ #include "ui/views/layout/grid_layout.h"
+ #include "ui/views/widget/widget.h"
+ 
++#ifdef LUNETIX_BUILD
++#include "lunetix/common/lunetix_constants.h"
++#include "lunetix/common/lunetix_version_info.h"
++#endif
++
+ namespace {
+ 
+ const int kPanelVerticalSpacing = 10;
+@@ -85,12 +90,20 @@ void AboutChromeView::Init() {
+   
+   // Product name and version
+   views::Label* product_name_label = new views::Label(
++#ifdef LUNETIX_BUILD
++      base::ASCIIToUTF16(lunetix::kLunetixApplicationName));
++#else
+       l10n_util::GetStringUTF16(IDS_PRODUCT_NAME));
++#endif
+   product_name_label->SetFontList(ui::ResourceBundle::GetSharedInstance().
+       GetFontList(ui::ResourceBundle::LargeFont));
+   
+   views::Label* version_label = new views::Label(
++#ifdef LUNETIX_BUILD
++      base::ASCIIToUTF16(lunetix::version_info::GetVersionString()));
++#else
+       base::ASCIIToUTF16(version_info::GetVersionNumber()));
++#endif
+   
+   // Copyright information
+   views::Label* copyright_label = new views::Label(
+@@ -98,7 +111,11 @@ void AboutChromeView::Init() {
+   
+   // Company name
+   views::Label* company_label = new views::Label(
++#ifdef LUNETIX_BUILD
++      base::ASCIIToUTF16("Lunetix Technologies"));
++#else
+       l10n_util::GetStringUTF16(IDS_ABOUT_VERSION_COMPANY_NAME));
++#endif
+   
+   layout->StartRow(0, 0);
+   layout->AddView(product_name_label);

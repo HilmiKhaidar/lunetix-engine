@@ -1,0 +1,13 @@
+diff --git a/content/common/user_agent.cc b/content/common/user_agent.cc
+index 1234567..abcdefg 100644
+--- a/content/common/user_agent.cc
++++ b/content/common/user_agent.cc
+@@ -45,7 +45,7 @@ std::string GetUserAgent() {
+   std::string user_agent;
+   user_agent += "Mozilla/5.0 ";
+   user_agent += BuildOSCpuInfo();
+-  user_agent += " Chrome/";
++  user_agent += " Lunetix/";
+   user_agent += version_info::GetVersionNumber();
+   user_agent += " Safari/537.36";
+   return user_agent;

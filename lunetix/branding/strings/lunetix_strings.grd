@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grit latest_public_release="0" current_release="1">
+  <outputs>
+    <output filename="lunetix_strings.h" type="rc_header">
+      <emit emit_type='prepend'></emit>
+    </output>
+    <output filename="lunetix_strings_en.pak" type="data_package" lang="en" />
+  </outputs>
+  <translations>
+    <file path="lunetix_strings_en.xtb" lang="en" />
+  </translations>
+  <release seq="1">
+    <messages fallback_to_english="true">
+      <message name="IDS_LUNETIX_PRODUCT_NAME" desc="The product name">
+        Lunetix
+      </message>
+      <message name="IDS_LUNETIX_PRODUCT_DESCRIPTION" desc="The product description">
+        Lunetix Web Browser
+      </message>
+      <message name="IDS_LUNETIX_ABOUT_VERSION_COMPANY_NAME" desc="Company name in about dialog">
+        Lunetix Technologies
+      </message>
+      <message name="IDS_LUNETIX_ABOUT_VERSION_COPYRIGHT" desc="Copyright text in about dialog">
+        Copyright © 2024 Lunetix Technologies. All rights reserved.
+      </message>
+    </messages>
+  </release>
+</grit>

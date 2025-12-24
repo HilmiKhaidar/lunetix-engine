@@ -1,0 +1,20 @@
+import("//build/config/chrome_build.gni")
+
+static_library("renderer") {
+  sources = [
+    "lunetix_content_renderer_client.cc",
+    "lunetix_content_renderer_client.h",
+    "lunetix_render_thread_observer.cc",
+    "lunetix_render_thread_observer.h",
+  ]
+
+  deps = [
+    "//base",
+    "//chrome/renderer",
+    "//content/public/renderer",
+    "//lunetix/common",
+    "//third_party/blink/public:blink",
+  ]
+
+  configs += [ "//lunetix:lunetix_features" ]
+}

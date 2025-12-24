@@ -1,0 +1,38 @@
+import("//build/config/chrome_build.gni")
+
+static_library("common") {
+  sources = [
+    "lunetix_constants.cc",
+    "lunetix_constants.h",
+    "lunetix_paths.cc",
+    "lunetix_paths.h",
+    "lunetix_switches.cc",
+    "lunetix_switches.h",
+    "lunetix_version_info.cc",
+    "lunetix_version_info.h",
+  ]
+
+  deps = [
+    "//base",
+    "//chrome/common",
+    "//content/public/common",
+  ]
+
+  configs += [ "//lunetix:lunetix_features" ]
+}
+
+test("common_unittests") {
+  testonly = true
+  sources = [
+    "lunetix_paths_unittest.cc",
+    "lunetix_version_info_unittest.cc",
+  ]
+
+  deps = [
+    ":common",
+    "//base/test:test_support",
+    "//testing/gtest",
+  ]
+
+  configs += [ "//lunetix:lunetix_features" ]
+}

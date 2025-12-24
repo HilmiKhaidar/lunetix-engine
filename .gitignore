@@ -1,0 +1,46 @@
+# Chromium source directory (too large for GitHub)
+src/
+
+# Build outputs
+out/
+dist/
+*.exe
+*.dll
+*.pak
+*.bin
+*.dat
+
+# Temporary files
+*.tmp
+*.log
+*.cache
+build_report.json
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Node modules (if any)
+node_modules/
+
+# Backup files
+*.bak
+*.orig
+
+# Large binary files
+*.iso
+*.zip
+*.tar.gz
+*.7z

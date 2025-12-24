@@ -1,0 +1,15 @@
+diff --git a/chrome/browser/prefs/browser_prefs.cc b/chrome/browser/prefs/browser_prefs.cc
+index 1234567..abcdefg 100644
+--- a/chrome/browser/prefs/browser_prefs.cc
++++ b/chrome/browser/prefs/browser_prefs.cc
+@@ -150,6 +150,10 @@ void RegisterBrowserPrefs(PrefRegistrySimple* registry) {
+   registry->RegisterBooleanPref(prefs::kEnableDoNotTrack, false);
+   registry->RegisterBooleanPref(prefs::kEnableReferrers, true);
+   
++  // Lunetix default preferences
++  registry->RegisterStringPref(prefs::kHomePage, "https://lunetix.com");
++  registry->RegisterBooleanPref(prefs::kShowHomeButton, true);
++  
+   // Privacy and security defaults
+   registry->RegisterBooleanPref(prefs::kSafeBrowsingEnabled, true);
+   registry->RegisterBooleanPref(prefs::kSafeBrowsingExtendedReportingEnabled, false);

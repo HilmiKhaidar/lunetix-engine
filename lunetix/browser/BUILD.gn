@@ -1,0 +1,63 @@
+import("//build/config/chrome_build.gni")
+import("//build/config/features.gni")
+
+static_library("browser") {
+  sources = [
+    "lunetix_browser_main_parts.cc",
+    "lunetix_browser_main_parts.h",
+    "lunetix_content_browser_client.cc",
+    "lunetix_content_browser_client.h",
+    "lunetix_browser_process.cc",
+    "lunetix_browser_process.h",
+    "profiles/lunetix_profile_manager.cc",
+    "profiles/lunetix_profile_manager.h",
+    "ui/lunetix_browser_window.cc",
+    "ui/lunetix_browser_window.h",
+    "ui/views/lunetix_browser_frame.cc",
+    "ui/views/lunetix_browser_frame.h",
+    "ui/views/lunetix_browser_view.cc",
+    "ui/views/lunetix_browser_view.h",
+    "memory/lunetix_memory_optimizer.cc",
+    "memory/lunetix_memory_optimizer.h",
+    "memory/lunetix_memory_settings.cc",
+    "memory/lunetix_memory_settings.h",
+    "ui/views/memory/memory_optimizer_bubble_view.cc",
+    "ui/views/memory/memory_optimizer_bubble_view.h",
+    "extensions/lunetix_extension_system.cc",
+    "extensions/lunetix_extension_system.h",
+    "net/lunetix_network_delegate.cc",
+    "net/lunetix_network_delegate.h",
+  ]
+
+  deps = [
+    "//base",
+    "//chrome/browser",
+    "//chrome/common",
+    "//content/public/browser",
+    "//content/public/common",
+    "//extensions/browser",
+    "//lunetix/common",
+    "//net",
+    "//ui/base",
+    "//ui/views",
+  ]
+
+  configs += [ "//lunetix:lunetix_features" ]
+}
+
+test("browser_tests") {
+  testonly = true
+  sources = [
+    "lunetix_browser_test.cc",
+  ]
+
+  deps = [
+    ":browser",
+    "//base/test:test_support",
+    "//chrome/test:test_support",
+    "//content/test:test_support",
+    "//testing/gtest",
+  ]
+
+  configs += [ "//lunetix:lunetix_features" ]
+}

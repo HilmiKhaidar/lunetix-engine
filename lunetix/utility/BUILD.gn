@@ -1,0 +1,17 @@
+import("//build/config/chrome_build.gni")
+
+static_library("utility") {
+  sources = [
+    "lunetix_content_utility_client.cc",
+    "lunetix_content_utility_client.h",
+  ]
+
+  deps = [
+    "//base",
+    "//chrome/utility",
+    "//content/public/utility",
+    "//lunetix/common",
+  ]
+
+  configs += [ "//lunetix:lunetix_features" ]
+}
