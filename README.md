@@ -5,6 +5,9 @@ Modern web browser built on Chromium with memory optimization and enhanced priva
 ## Features
 
 - **Memory Optimizer** - Automatic tab suspension to save RAM
+- **Workspace Manager** - Tab grouping and workspaces organization
+- **Reading Mode** - Distraction-free reading experience
+- **Dark Mode Engine** - Force dark mode on any website
 - **Privacy-focused** - Independent from Chrome/Google
 - **Chromium-based** - Full web compatibility
 

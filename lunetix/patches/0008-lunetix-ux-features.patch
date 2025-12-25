@@ -1,0 +1,157 @@
+diff --git a/chrome/browser/ui/views/frame/browser_view.cc b/chrome/browser/ui/views/frame/browser_view.cc
+index 1234567..abcdefg 100644
+--- a/chrome/browser/ui/views/frame/browser_view.cc
++++ b/chrome/browser/ui/views/frame/browser_view.cc
+@@ -45,6 +45,12 @@
+ #include "ui/views/widget/widget.h"
+ #include "ui/views/window/dialog_delegate.h"
+ 
++#ifdef LUNETIX_BUILD
++#include "lunetix/browser/workspaces/lunetix_workspace_manager.h"
++#include "lunetix/browser/reading_mode/lunetix_reading_mode.h"
++#include "lunetix/browser/dark_mode/lunetix_dark_mode_engine.h"
++#endif
++
+ using base::UserMetricsAction;
+ using content::NativeWebKeyboardEvent;
+ using content::WebContents;
+@@ -150,6 +156,15 @@ void BrowserView::InitViews() {
+   
+   LoadAccelerators();
+   
++#ifdef LUNETIX_BUILD
++  // Initialize Lunetix UX features
++  workspace_manager_ = std::make_unique<lunetix::LunetixWorkspaceManager>();
++  
++  // Initialize reading mode and dark mode for existing tabs
++  TabStripModel* tab_strip = browser_->tab_strip_model();
++  for (int i = 0; i < tab_strip->count(); ++i) {
++    InitializeLunetixFeaturesForTab(tab_strip->GetWebContentsAt(i));
++  }
++#endif
++  
+   BrowserViewLayout* browser_view_layout = new BrowserViewLayout;
+   browser_view_layout->Init(new BrowserViewLayoutDelegateImpl(this),
+                            browser(),
+@@ -200,6 +215,18 @@ void BrowserView::AddedToWidget() {
+   frame_->OnBrowserViewInitViewsComplete();
+ }
+ 
++#ifdef LUNETIX_BUILD
++void BrowserView::InitializeLunetixFeaturesForTab(content::WebContents* web_contents) {
++  // Initialize reading mode
++  lunetix::LunetixReadingMode::CreateForWebContents(web_contents);
++  
++  // Initialize dark mode engine
++  lunetix::LunetixDarkModeEngine::CreateForWebContents(web_contents);
++  
++  // Add tab to workspace manager
++  workspace_manager_->OnTabCreated(web_contents);
++}
++#endif
++
+ void BrowserView::LoadingAnimationCallback() {
+   base::TimeTicks now = base::TimeTicks::Now();
+   if (!last_animation_time_.is_null()) {
+diff --git a/chrome/browser/ui/views/frame/browser_view.h b/chrome/browser/ui/views/frame/browser_view.h
+index 1234567..abcdefg 100644
+--- a/chrome/browser/ui/views/frame/browser_view.h
++++ b/chrome/browser/ui/views/frame/browser_view.h
+@@ -25,6 +25,10 @@
+ class TabStripModel;
+ class ToolbarView;
+ 
++#ifdef LUNETIX_BUILD
++namespace lunetix { class LunetixWorkspaceManager; }
++#endif
++
+ class BrowserView : public BrowserWindow,
+                    public views::WidgetDelegateView,
+                    public views::WidgetObserver {
+@@ -150,6 +154,11 @@ class BrowserView : public BrowserWindow,
+   void UpdateUIForContents(content::WebContents* contents) override;
+   void RevealTabStripIfNeeded() override;
+   
++#ifdef LUNETIX_BUILD
++  // Lunetix UX features initialization
++  void InitializeLunetixFeaturesForTab(content::WebContents* web_contents);
++#endif
++  
+  protected:
+   // BrowserWindow overrides:
+   void DestroyBrowser() override;
+@@ -200,6 +209,10 @@ class BrowserView : public BrowserWindow,
+   std::unique_ptr<ExclusiveAccessBubbleViews> exclusive_access_bubble_;
+   std::unique_ptr<ImmersiveModeController> immersive_mode_controller_;
+   
++#ifdef LUNETIX_BUILD
++  std::unique_ptr<lunetix::LunetixWorkspaceManager> workspace_manager_;
++#endif
++  
+   DISALLOW_COPY_AND_ASSIGN(BrowserView);
+ };
+ 
+diff --git a/chrome/browser/ui/browser_commands.cc b/chrome/browser/ui/browser_commands.cc
+index 1234567..abcdefg 100644
+--- a/chrome/browser/ui/browser_commands.cc
++++ b/chrome/browser/ui/browser_commands.cc
+@@ -25,6 +25,12 @@
+ #include "chrome/browser/ui/tabs/tab_strip_model.h"
+ #include "content/public/browser/web_contents.h"
+ 
++#ifdef LUNETIX_BUILD
++#include "lunetix/browser/workspaces/lunetix_workspace_manager.h"
++#include "lunetix/browser/reading_mode/lunetix_reading_mode.h"
++#include "lunetix/browser/dark_mode/lunetix_dark_mode_engine.h"
++#endif
++
+ namespace chrome {
+ 
+ void NewTab(Browser* browser) {
+@@ -150,6 +156,30 @@ void ToggleDevTools(Browser* browser) {
+   DevToolsWindow::ToggleDevToolsWindow(browser, DevToolsToggleAction::kToggle);
+ }
+ 
++#ifdef LUNETIX_BUILD
++void ToggleReadingMode(Browser* browser) {
++  content::WebContents* web_contents = 
++      browser->tab_strip_model()->GetActiveWebContents();
++  if (web_contents) {
++    lunetix::LunetixReadingModeController::GetInstance()->ToggleReadingMode(web_contents);
++  }
++}
++
++void ToggleDarkMode(Browser* browser) {
++  content::WebContents* web_contents = 
++      browser->tab_strip_model()->GetActiveWebContents();
++  if (web_contents) {
++    lunetix::LunetixDarkModeEngine* dark_mode = 
++        lunetix::LunetixDarkModeEngine::FromWebContents(web_contents);
++    if (dark_mode) {
++      dark_mode->ToggleDarkMode();
++    } else {
++      lunetix::LunetixDarkModeEngine::CreateForWebContents(web_contents);
++      lunetix::LunetixDarkModeEngine::FromWebContents(web_contents)->EnableDarkMode();
++    }
++  }
++}
++#endif
++
+ }  // namespace chrome
+ 
+diff --git a/chrome/browser/ui/browser_commands.h b/chrome/browser/ui/browser_commands.h
+index 1234567..abcdefg 100644
+--- a/chrome/browser/ui/browser_commands.h
++++ b/chrome/browser/ui/browser_commands.h
+@@ -45,6 +45,11 @@ void ShowBookmarkManager(Browser* browser);
+ void ShowHistory(Browser* browser);
+ void ShowDownloads(Browser* browser);
+ 
++#ifdef LUNETIX_BUILD
++void ToggleReadingMode(Browser* browser);
++void ToggleDarkMode(Browser* browser);
++#endif
++
+ }  // namespace chrome
+ 
+ #endif  // CHROME_BROWSER_UI_BROWSER_COMMANDS_H_

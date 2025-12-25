@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunetix Browser - UI Concept</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+
+        /* Browser Window */
+        .browser-window {
+            background: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: #2d2d2d;
+            color: white;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            justify-content: space-between;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .close {
+            background: #ff5f57;
+        }
+
+        .minimize {
+            background: #ffbd2e;
+        }
+
+        .maximize {
+            background: #28ca42;
+        }
+
+        /* Tab Bar with Workspaces */
+        .tab-workspace-bar {
+            background: #e8e8e8;
+            border-bottom: 1px solid #d0d0d0;
+            display: flex;
+            height: 40px;
+        }
+
+        .workspace-tabs {
+            display: flex;
+            background: #f0f0f0;
+            border-right: 1px solid #d0d0d0;
+            min-width: 200px;
+        }
+
+        .workspace-tab {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border-right: 1px solid #d0d0d0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .workspace-tab.active {
+            background: white;
+            border-bottom: 2px solid #4285f4;
+        }
+
+        .workspace-color {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .main-tabs {
+            flex: 1;
+            display: flex;
+            background: white;
+        }
+
+        .tab {
+            min-width: 200px;
+            max-width: 240px;
+            height: 40px;
+            background: #f8f8f8;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab.active {
+            background: white;
+        }
+
+        .tab-favicon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            background: #4285f4;
+            border-radius: 2px;
+        }
+
+        .tab-title {
+            flex: 1;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tab-close {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            border: none;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .tab-suspended {
+            opacity: 0.6;
+        }
+
+        .tab-suspended::after {
+            content: "💤";
+            position: absolute;
+            right: 4px;
+            top: 4px;
+            font-size: 10px;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: white;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #e0e0e0;
+            gap: 8px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 4px;
+            background: #f8f8f8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .nav-btn:hover {
+            background: #e8e8e8;
+        }
+
+        .address-bar {
+            flex: 1;
+            height: 32px;
+            border: 1px solid #d0d0d0;
+            border-radius: 20px;
+            padding: 0 16px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .address-bar:focus {
+            border-color: #4285f4;
+        }
+
+        .feature-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .feature-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 4px;
+            background: #f8f8f8;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .feature-btn.active {
+            background: #4285f4;
+            color: white;
+        }
+
+        .feature-btn:hover {
+            background: #e8e8e8;
+        }
+
+        .feature-btn.active:hover {
+            background: #3367d6;
+        }
+
+        /* Memory Optimizer Indicator */
+        .memory-indicator {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: #34a853;
+            border-radius: 50%;
+            font-size: 8px;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .webpage-content {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        /* Reading Mode Overlay */
+        .reading-mode-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #f4f1ea;
+            color: #5c4b37;
+            padding: 40px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .reading-mode-overlay.active {
+            display: block;
+        }
+
+        .reading-content {
+            max-width: 700px;
+            margin: 0 auto;
+            font-family: Georgia, serif;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .reading-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .reading-meta {
+            color: #8a7a6b;
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        .dark-mode .browser-window {
+            background: #2d2d2d;
+        }
+
+        .dark-mode .tab-workspace-bar {
+            background: #3d3d3d;
+            border-color: #555;
+        }
+
+        .dark-mode .toolbar {
+            background: #2d2d2d;
+            border-color: #555;
+        }
+
+        .dark-mode .address-bar {
+            background: #404040;
+            border-color: #666;
+            color: #e0e0e0;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 24px;
+            background: #f8f8f8;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 12px;
+            color: #666;
+            justify-content: space-between;
+        }
+
+        .status-left {
+            display: flex;
+            gap: 16px;
+        }
+
+        .status-right {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Floating Panels */
+        .memory-panel {
+            position: absolute;
+            top: 60px;
+            right: 16px;
+            width: 300px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            display: none;
+        }
+
+        .memory-panel.show {
+            display: block;
+        }
+
+        .panel-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .memory-stats {
+            background: #f8f8f8;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .switch {
+            width: 40px;
+            height: 20px;
+            background: #ccc;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .switch.on {
+            background: #4285f4;
+        }
+
+        .switch::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: 0.2s;
+        }
+
+        .switch.on::after {
+            left: 22px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="browser-window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="window-controls">
+                <button class="control-btn close"></button>
+                <button class="control-btn minimize"></button>
+                <button class="control-btn maximize"></button>
+            </div>
+            <div class="title">Lunetix Browser</div>
+            <div></div>
+        </div>
+
+        <!-- Tab Bar with Workspaces -->
+        <div class="tab-workspace-bar">
+            <div class="workspace-tabs">
+                <div class="workspace-tab active">
+                    <div class="workspace-color" style="background: #4285f4;"></div>
+                    Work
+                </div>
+                <div class="workspace-tab">
+                    <div class="workspace-color" style="background: #34a853;"></div>
+                    Personal
+                </div>
+                <div class="workspace-tab">
+                    <div class="workspace-color" style="background: #ea4335;"></div>
+                    Research
+                </div>
+            </div>
+
+            <div class="main-tabs">
+                <div class="tab active">
+                    <div class="tab-favicon"></div>
+                    <div class="tab-title">Lunetix Browser - Modern Web Experience</div>
+                    <button class="tab-close">×</button>
+                </div>
+                <div class="tab tab-suspended">
+                    <div class="tab-favicon" style="background: #34a853;"></div>
+                    <div class="tab-title">GitHub - Suspended Tab</div>
+                    <button class="tab-close">×</button>
+                </div>
+                <div class="tab">
+                    <div class="tab-favicon" style="background: #ea4335;"></div>
+                    <div class="tab-title">Documentation</div>
+                    <button class="tab-close">×</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="nav-buttons">
+                <button class="nav-btn">←</button>
+                <button class="nav-btn">→</button>
+                <button class="nav-btn">↻</button>
+            </div>
+
+            <input type="text" class="address-bar" value="https://lunetix.com" placeholder="Search or enter address">
+
+            <div class="feature-buttons">
+                <button class="feature-btn" title="Memory Optimizer" onclick="toggleMemoryPanel()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <div class="memory-indicator"></div>
+                </button>
+                <button class="feature-btn" title="Reading Mode" onclick="toggleReadingMode()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
+                    </svg>
+                </button>
+                <button class="feature-btn active" title="Dark Mode" onclick="toggleDarkMode()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-5.52-4.48-10-10-10z"/>
+                    </svg>
+                </button>
+                <button class="feature-btn" title="Workspaces">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/>
+                    </svg>
+                </button>
+                <button class="feature-btn" title="Settings">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.69,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="webpage-content">
+                <div>
+                    <h1>🚀 Lunetix Browser</h1>
+                    <p>Modern • Fast • Privacy-Focused</p>
+                    <br>
+                    <p style="font-size: 16px; opacity: 0.8;">
+                        Memory Optimizer Active • Dark Mode Enabled<br>
+                        Workspace: Work • 2 Tabs Suspended
+                    </p>
+                </div>
+            </div>
+
+            <!-- Reading Mode Overlay -->
+            <div class="reading-mode-overlay" id="readingMode">
+                <div class="reading-content">
+                    <div class="reading-title">The Future of Web Browsing</div>
+                    <div class="reading-meta">By Lunetix Team • 5 min read</div>
+                    <p>Modern web browsers need to evolve beyond simple page rendering. Users demand intelligent memory
+                        management, distraction-free reading experiences, and seamless workspace organization.</p>
+                    <p>Lunetix Browser addresses these needs with innovative features like automatic tab suspension,
+                        smart dark mode, and workspace management - all built on the solid foundation of Chromium.</p>
+                    <p>Our memory optimizer can reduce browser memory usage by up to 60% through intelligent tab
+                        suspension, while our reading mode transforms any article into a clean, focused reading
+                        experience.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span>Memory: 1.2GB saved</span>
+                <span>3 tabs suspended</span>
+                <span>Dark mode: ON</span>
+            </div>
+            <div class="status-right">
+                <span>Secure connection</span>
+                <span>Lunetix v1.0.0</span>
+            </div>
+        </div>
+
+        <!-- Memory Optimizer Panel -->
+        <div class="memory-panel" id="memoryPanel">
+            <div class="panel-title">Memory Optimizer</div>
+            <div class="memory-stats">
+                <div>Memory saved: <strong>1.2 GB</strong></div>
+                <div>Suspended tabs: <strong>3</strong></div>
+                <div>Active tabs: <strong>2</strong></div>
+            </div>
+
+            <div class="toggle-switch">
+                <span>Enable Memory Optimizer</span>
+                <div class="switch on"></div>
+            </div>
+
+            <div class="toggle-switch">
+                <span>Suspend inactive tabs after:</span>
+                <select style="padding: 4px;">
+                    <option>10 minutes</option>
+                    <option selected>30 minutes</option>
+                    <option>1 hour</option>
+                </select>
+            </div>
+
+            <button
+                style="width: 100%; padding: 8px; background: #4285f4; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Suspend All Tabs
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function toggleMemoryPanel() {
+            const panel = document.getElementById('memoryPanel');
+            panel.classList.toggle('show');
+        }
+
+        function toggleReadingMode() {
+            const overlay = document.getElementById('readingMode');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // Close panels when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.memory-panel') && !e.target.closest('[title="Memory Optimizer"]')) {
+                document.getElementById('memoryPanel').classList.remove('show');
+            }
+        });
+    </script>
+</body>
+
+</html>

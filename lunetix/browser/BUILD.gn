@@ -27,6 +27,12 @@ static_library("browser") {
     "extensions/lunetix_extension_system.h",
     "net/lunetix_network_delegate.cc",
     "net/lunetix_network_delegate.h",
+    "workspaces/lunetix_workspace_manager.cc",
+    "workspaces/lunetix_workspace_manager.h",
+    "reading_mode/lunetix_reading_mode.cc",
+    "reading_mode/lunetix_reading_mode.h",
+    "dark_mode/lunetix_dark_mode_engine.cc",
+    "dark_mode/lunetix_dark_mode_engine.h",
   ]
 
   deps = [
