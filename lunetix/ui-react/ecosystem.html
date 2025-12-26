@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#007AFF" />
+    
+    <title>Lunetix Ecosystem Demo</title>
+    
+    <!-- Meta Tags for Social Sharing -->
+    <meta name="description" content="Experience the Lunetix browser ecosystem - unified design across all Apple devices" />
+    <meta property="og:title" content="Lunetix Ecosystem Demo" />
+    <meta property="og:description" content="Experience the Lunetix browser ecosystem - unified design across all Apple devices" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og-image.png" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+        background: linear-gradient(135deg, #F5F5F7 0%, #FFFFFF 50%, #F0F0F2 100%);
+        color: #1D1D1F;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        line-height: 1.6;
+      }
+      
+      #root {
+        width: 100%;
+        min-height: 100vh;
+      }
+      
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+      }
+      
+      /* Loading animation */
+      .loading-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      }
+      
+      .loading-text {
+        color: white;
+        font-size: 2rem;
+        font-weight: 100;
+        animation: pulse 2s ease-in-out infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+      }
+      
+      .loading-container.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-container">
+      <div class="loading-text">Lunetix Ecosystem</div>
+    </div>
+    
+    <div id="root"></div>
+    
+    <script>
+      // Analytics and tracking (placeholder)
+      window.LUNETIX_ANALYTICS = {
+        track: function(event, properties) {
+          console.log('Analytics:', event, properties);
+        }
+      };
+      
+      // Track page view
+      window.LUNETIX_ANALYTICS.track('ecosystem_demo_view', {
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent
+      });
+      
+      // Hide loading screen
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loading = document.getElementById('loading');
+          if (loading) {
+            loading.classList.add('fade-out');
+            setTimeout(() => {
+              loading.remove();
+            }, 500);
+          }
+        }, 1500);
+      });
+      
+      // Intersection Observer for animations
+      if ('IntersectionObserver' in window) {
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('animate-in');
+            }
+          });
+        }, observerOptions);
+        
+        // Observe elements when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+          const animateElements = document.querySelectorAll('[data-animate]');
+          animateElements.forEach(el => observer.observe(el));
+        });
+      }
+    </script>
+    
+    <script type="module">
+      import React from 'react';
+      import ReactDOM from 'react-dom/client';
+      import EcosystemDemo from './src/components/EcosystemDemo.jsx';
+      import './src/index.css';
+
+      ReactDOM.createRoot(document.getElementById('root')).render(
+        React.createElement(React.StrictMode, null,
+          React.createElement(EcosystemDemo)
+        )
+      );
+    </script>
+  </body>
+</html>
