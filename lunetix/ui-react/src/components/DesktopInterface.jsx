@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import DesktopToolbar from './DesktopToolbar';
 import TabSwitcher from './TabSwitcher';
+import TabManager from './TabManager';
+import AddressBar from './AddressBar';
+import BookmarkManager from './BookmarkManager';
+// import DownloadManager from './DownloadManager';
+import browserAPI from '../services/BrowserAPI';
 import { useBrowserBridge } from '../utils/browserBridge';
 import { 
   Search, 
@@ -27,6 +32,8 @@ const DesktopInterface = () => {
   ]);
   const [activeTabId, setActiveTabId] = useState(1);
   const [isTabSwitcherOpen, setIsTabSwitcherOpen] = useState(false);
+  const [showBookmarks, setShowBookmarks] = useState(false);
+  const [showDownloads, setShowDownloads] = useState(false);
   const [currentUrl, setCurrentUrl] = useState('lunetix://start');
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
@@ -36,6 +43,25 @@ const DesktopInterface = () => {
   const bridge = useBrowserBridge();
 
   useEffect(() => {
+    // Initialize browser API
+    browserAPI.onTabCreated((tabData) => {
+      setTabs(prev => [...prev, tabData]);
+    });
+
+    browserAPI.onTabUpdated((tabData) => {
+      setTabs(prev => prev.map(tab => 
+        tab.id === tabData.id ? { ...tab, ...tabData } : tab
+      ));
+    });
+
+    browserAPI.onTabClosed((tabData) => {
+      setTabs(prev => prev.filter(tab => tab.id !== tabData.id));
+    });
+
+    browserAPI.onTabActivated((tabData) => {
+      setActiveTabId(tabData.id);
+    });
+
     // Update time every second
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -60,46 +86,70 @@ const DesktopInterface = () => {
   }, [bridge]);
 
   const handleNavigate = (url) => {
+    const activeTab = tabs.find(tab => tab.id === activeTabId);
+    if (activeTab) {
+      browserAPI.navigate(activeTabId, url);
+    }
     bridge.navigate(url);
     setCurrentUrl(url);
   };
 
-  const handleNewTab = () => {
-    const newTab = {
-      id: Date.now(),
-      title: 'New Tab',
-      url: 'lunetix://newtab',
-      favicon: null,
-      isLoading: false
-    };
-    setTabs(prev => [...prev, newTab]);
-    setActiveTabId(newTab.id);
+  const handleNewTab = async () => {
+    try {
+      await browserAPI.createTab();
+    } catch (error) {
+      // Fallback to local state
+      const newTab = {
+        id: Date.now(),
+        title: 'New Tab',
+        url: 'lunetix://newtab',
+        favicon: null,
+        isLoading: false
+      };
+      setTabs(prev => [...prev, newTab]);
+      setActiveTabId(newTab.id);
+    }
     bridge.createTab();
   };
 
-  const handleCloseTab = (tabId) => {
-    setTabs(prev => prev.filter(tab => tab.id !== tabId));
-    if (activeTabId === tabId && tabs.length > 1) {
-      const remainingTabs = tabs.filter(tab => tab.id !== tabId);
-      setActiveTabId(remainingTabs[0]?.id);
+  const handleCloseTab = async (tabId) => {
+    try {
+      await browserAPI.closeTab(tabId);
+    } catch (error) {
+      // Fallback to local state
+      setTabs(prev => prev.filter(tab => tab.id !== tabId));
+      if (activeTabId === tabId && tabs.length > 1) {
+        const remainingTabs = tabs.filter(tab => tab.id !== tabId);
+        setActiveTabId(remainingTabs[0]?.id);
+      }
     }
     bridge.closeTab(tabId);
   };
 
-  const handleTabChange = (tabId) => {
-    setActiveTabId(tabId);
-    const tab = tabs.find(t => t.id === tabId);
-    if (tab) {
-      setCurrentUrl(tab.url);
-      bridge.switchTab(tabId);
+  const handleTabChange = async (tabId) => {
+    try {
+      await browserAPI.switchTab(tabId);
+      setActiveTabId(tabId);
+      const tab = tabs.find(t => t.id === tabId);
+      if (tab) {
+        setCurrentUrl(tab.url);
+      }
+    } catch (error) {
+      // Fallback to local state
+      setActiveTabId(tabId);
+      const tab = tabs.find(t => t.id === tabId);
+      if (tab) {
+        setCurrentUrl(tab.url);
+      }
     }
+    bridge.switchTab(tabId);
   };
 
-  const FavoriteItem = ({ icon: Icon, title, url, gradient }) => (
+  const FavoriteItem = ({ icon: Icon, title, url, gradient, onClick }) => (
     <motion.button
       whileHover={{ scale: 1.02, y: -2 }}
       whileTap={{ scale: 0.98 }}
-      onClick={() => handleNavigate(url)}
+      onClick={onClick || (() => handleNavigate(url))}
       className="group flex flex-col items-center p-6 bg-white/60 backdrop-blur-sm border border-white/30 rounded-squircle-lg hover:bg-white/80 transition-all duration-300 shadow-apple hover:shadow-apple-lg"
     >
       <div className={`w-12 h-12 ${gradient} rounded-squircle mb-3 flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
@@ -131,22 +181,16 @@ const DesktopInterface = () => {
 
   return (
     <div className="h-screen bg-gradient-to-br from-apple-gray-50 via-white to-apple-gray-100 flex flex-col">
-      {/* Desktop Toolbar */}
-      <DesktopToolbar
-        tabs={tabs}
-        activeTabId={activeTabId}
-        onTabChange={handleTabChange}
-        onTabClose={handleCloseTab}
-        onNewTab={handleNewTab}
-        url={currentUrl}
-        onNavigate={handleNavigate}
-        onReload={() => bridge.reload()}
-        onBack={() => bridge.goBack()}
-        onForward={() => bridge.goForward()}
-        canGoBack={canGoBack}
-        canGoForward={canGoForward}
-        isLoading={isLoading}
-      />
+      {/* Tab Manager */}
+      <TabManager className="border-b border-gray-200/50" />
+
+      {/* Address Bar */}
+      <div className="px-4 py-2 bg-white/80 backdrop-blur-xl border-b border-gray-200/50">
+        <AddressBar 
+          activeTab={tabs.find(tab => tab.id === activeTabId)}
+          className="w-full"
+        />
+      </div>
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-hidden">
@@ -222,14 +266,16 @@ const DesktopInterface = () => {
             <FavoriteItem
               icon={Star}
               title="Bookmarks"
-              url="lunetix://bookmarks"
+              url="#"
               gradient="bg-gradient-to-br from-yellow-400 to-yellow-500"
+              onClick={() => setShowBookmarks(true)}
             />
             <FavoriteItem
-              icon={Shield}
-              title="Privacy"
-              url="lunetix://privacy"
-              gradient="bg-gradient-to-br from-green-500 to-green-600"
+              icon={Download}
+              title="Downloads"
+              url="#"
+              gradient="bg-gradient-to-br from-purple-500 to-purple-600"
+              onClick={() => setShowDownloads(true)}
             />
           </motion.div>
 
@@ -308,6 +354,18 @@ const DesktopInterface = () => {
         onTabClose={handleCloseTab}
         onNewTab={handleNewTab}
       />
+
+      {/* Bookmark Manager */}
+      <BookmarkManager
+        isOpen={showBookmarks}
+        onClose={() => setShowBookmarks(false)}
+      />
+
+      {/* Download Manager */}
+      {/* <DownloadManager
+        isOpen={showDownloads}
+        onClose={() => setShowDownloads(false)}
+      /> */}
     </div>
   );
 };
